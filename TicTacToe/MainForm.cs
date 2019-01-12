@@ -5,12 +5,12 @@ namespace TicTacToe
 {
     public partial class MainForm : Form
     {
-        public int Rows = 3;
-        public int Columns = 3;
-        public float LineThickness = 10F;
-        public int BordMargin = 30;
-        public int FieldWidth;
-        public int FieldHeight;
+        public int Rows = 3;    // Number of rows in the grid
+        public int Columns = 3; // Number f columns in the grid
+        public float LineThickness = 10F;   // Line thickness in pixels
+        public int BordMargin = 30; // Top, right, bottom and left margin of the grid
+        public int FieldWidth;  // Width of a single field in the grid
+        public int FieldHeight; // Height of a single field in the grid
 
         public MainForm()
         {
@@ -21,20 +21,21 @@ namespace TicTacToe
             FieldHeight = (MainPanel.Height - BordMargin * 2) / Rows;  // Set height of the grid fields
         }
 
-        protected void OnDraw(object sender, PaintEventArgs e)
+        private void OnDraw(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
             DrawGrid(g, Color.Black);
-            DrawX(g, Color.Black, 100, 100, 50);
-            DrawO(g, Color.Black, 100, 100, 50);
+
+            DrawX(g, 0, 0);
+            DrawX(g, 1, 1);
+            DrawX(g, 2, 2);
+
+            DrawO(g, 2, 0);
+            DrawO(g, 2, 1);
+            DrawO(g, 1, 2);
         }
 
-        public void DrawLine(Graphics g, Pen pen, int x1, int y1, int x2, int y2)
-        {
-            g.DrawLine(pen, new Point(x1, y1), new Point(x2, y2));
-        }
-
-        public void DrawGrid(Graphics g, Color color)
+        private void DrawGrid(Graphics g, Color color)
         {
             using (Pen pen = new Pen(color))
             {
@@ -56,28 +57,38 @@ namespace TicTacToe
             }
         }
 
-        public void DrawX(Graphics g, Color color, int x, int y, int size)
+        public void DrawX(Graphics g, int column, int row)
+        {
+            DrawX(g, Color.DarkBlue, new Point(BordMargin + (column + 1) * FieldWidth - FieldWidth / 2, BordMargin + (row + 1) * FieldHeight - FieldWidth / 2), 70);
+        }
+
+        private void DrawX(Graphics g, Color color, Point p, int size)
         {
             using (Pen pen = new Pen(color))
             {
                 pen.Width = LineThickness;
 
-                g.DrawLine(pen, new Point(x - size / 2, y - size / 2),
-                    new Point(x + size / 2, y + size / 2)); // Top-left to Bottom-right
-                g.DrawLine(pen, new Point(x - size / 2, y + size / 2),
-                    new Point(x + size / 2, y - size / 2)); // Bottom-left to Top-right
+                g.DrawLine(pen, new Point(p.X - size / 2, p.Y - size / 2),
+                    new Point(p.X + size / 2, p.Y + size / 2)); // Top-left to Bottom-right
+                g.DrawLine(pen, new Point(p.X - size / 2, p.Y + size / 2),
+                    new Point(p.X + size / 2, p.Y - size / 2)); // Bottom-left to Top-right
 
                 pen.Dispose();
             }
         }
 
-        public void DrawO(Graphics g, Color color, int x, int y, int size)
+        public void DrawO(Graphics g, int column, int row)
+        {
+            DrawO(g, Color.DarkRed, new Point(BordMargin + (column + 1) * FieldWidth - FieldWidth / 2, BordMargin + (row + 1) * FieldHeight - FieldWidth / 2), 70);
+        }
+
+        private void DrawO(Graphics g, Color color, Point p, int size)
         {
             using (Pen pen = new Pen(color))
             {
                 pen.Width = LineThickness;
 
-                g.DrawEllipse(pen, new Rectangle(x - size / 2, y - size / 2, size, size));  // Draw circle
+                g.DrawEllipse(pen, new Rectangle(p.X - size / 2, p.Y - size / 2, size, size));  // Draw circle
 
                 pen.Dispose();
             }
