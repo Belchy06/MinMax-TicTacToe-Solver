@@ -1,21 +1,30 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace TicTacToe
 {
     public partial class MainForm : Form
     {
+        public int WindowSize = 500;    // Size of the window
         public int Rows = 3;    // Number of rows in the grid
         public int Columns = 3; // Number f columns in the grid
-        public float LineThickness = 10F;   // Line thickness in pixels
+
+        public float LineThickness = 10;   // Line thickness in pixels
         public int BordMargin = 30; // Top, right, bottom and left margin of the grid
+        public int XOSize = 70; // Size of Xs and Os
+
         public int FieldWidth;  // Width of a single field in the grid
         public int FieldHeight; // Height of a single field in the grid
 
         public MainForm()
         {
             InitializeComponent();
+            Width = WindowSize; // Set width of form
+            Height = WindowSize;    // Set height of form
+
             MainPanel.Paint += OnDraw;  // Add a Paint Event Handler
+            MainPanel.MouseDown += OnMousePress;    // Add a Mouse Event Handler
 
             FieldWidth = (MainPanel.Width - BordMargin * 2) / Columns;    // Set width of the grid fields
             FieldHeight = (MainPanel.Height - BordMargin * 2) / Rows;  // Set height of the grid fields
@@ -33,6 +42,18 @@ namespace TicTacToe
             DrawO(g, 2, 0);
             DrawO(g, 2, 1);
             DrawO(g, 1, 2);
+        }
+
+        private void OnMousePress(object sender, MouseEventArgs e)
+        {
+            if(e.X > BordMargin && e.X < MainPanel.Width - BordMargin
+                && e.Y > BordMargin && e.Y < MainPanel.Height - BordMargin) // Clicked on board
+            {
+                int column = (e.X - BordMargin) / FieldWidth;   // Calculate column from X coordinate
+                int row = (e.Y - BordMargin) / FieldHeight; // Calculate row from Y coordinate
+
+                //TODO Do something
+            }
         }
 
         private void DrawGrid(Graphics g, Color color)
@@ -59,7 +80,8 @@ namespace TicTacToe
 
         public void DrawX(Graphics g, int column, int row)
         {
-            DrawX(g, Color.DarkBlue, new Point(BordMargin + (column + 1) * FieldWidth - FieldWidth / 2, BordMargin + (row + 1) * FieldHeight - FieldWidth / 2), 70);
+            DrawX(g, Color.DarkBlue, 
+                new Point(BordMargin + (column + 1) * FieldWidth - FieldWidth / 2, BordMargin + (row + 1) * FieldHeight - FieldWidth / 2), XOSize);
         }
 
         private void DrawX(Graphics g, Color color, Point p, int size)
@@ -79,7 +101,8 @@ namespace TicTacToe
 
         public void DrawO(Graphics g, int column, int row)
         {
-            DrawO(g, Color.DarkRed, new Point(BordMargin + (column + 1) * FieldWidth - FieldWidth / 2, BordMargin + (row + 1) * FieldHeight - FieldWidth / 2), 70);
+            DrawO(g, Color.DarkRed,
+                new Point(BordMargin + (column + 1) * FieldWidth - FieldWidth / 2, BordMargin + (row + 1) * FieldHeight - FieldWidth / 2), XOSize);
         }
 
         private void DrawO(Graphics g, Color color, Point p, int size)
