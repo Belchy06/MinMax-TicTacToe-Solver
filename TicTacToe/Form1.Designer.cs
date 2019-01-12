@@ -28,13 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.pbBoard = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pbBoard)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // pbBoard
+            // 
+            this.pbBoard.Location = new System.Drawing.Point(12, 12);
+            this.pbBoard.Name = "pbBoard";
+            this.pbBoard.Size = new System.Drawing.Size(776, 426);
+            this.pbBoard.TabIndex = 0;
+            this.pbBoard.TabStop = false;
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.pbBoard);
+            this.Name = "Form1";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.pbBoard)).EndInit();
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.PictureBox pbBoard;
     }
 }
 
