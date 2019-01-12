@@ -20,7 +20,7 @@ namespace TicTacToe
         private int rows = 3;
         private int cols = 3;
 
-        public static int LineTickness = 50;
+        public float LineTickness = 50F;
 
         public Form1()
         {
