@@ -20,12 +20,30 @@ namespace TicTacToe
         private int rows = 3;
         private int cols = 3;
 
-
+        public static int LineTickness = 50;
 
         public Form1()
         {
             InitializeComponent();
             setupBoard();
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            Graphics g = e.Graphics;
+            DrawLine(g, Color.Black, 10, 10, 250, 250);
+        }
+
+        public void DrawLine(Graphics g, Color color, int x1, int y1, int x2, int y2)
+        {
+            using (Pen pen = new Pen(color))
+            {
+                pen.Width = LineThickness;
+                g.DrawLine(pen, new Point(x1, y1), new Point(x2, y2));
+                pen.Dispose();
+            }
         }
 
 
