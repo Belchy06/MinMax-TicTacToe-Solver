@@ -1,6 +1,6 @@
 ﻿namespace TicTacToe
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,34 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pbBoard = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pbBoard)).BeginInit();
+            this.MainPanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // pbBoard
+            // MainPanel
             // 
-            this.pbBoard.Location = new System.Drawing.Point(12, 12);
-            this.pbBoard.Name = "pbBoard";
-            this.pbBoard.Size = new System.Drawing.Size(776, 426);
-            this.pbBoard.TabIndex = 0;
-            this.pbBoard.TabStop = false;
+            this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainPanel.Location = new System.Drawing.Point(0, 0);
+            this.MainPanel.Name = "MainPanel";
+            this.MainPanel.Size = new System.Drawing.Size(484, 461);
+            this.MainPanel.TabIndex = 0;
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.pbBoard);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.pbBoard)).EndInit();
+            this.ClientSize = new System.Drawing.Size(484, 461);
+            this.Controls.Add(this.MainPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Name = "MainForm";
+            this.Text = "MainForm";
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pbBoard;
+        private System.Windows.Forms.Panel MainPanel;
     }
 }
 

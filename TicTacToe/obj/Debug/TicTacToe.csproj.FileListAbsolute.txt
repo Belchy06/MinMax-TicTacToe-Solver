@@ -18,3 +18,13 @@ C:\Users\Will\Desktop\TicTacToe\TicTacToe\obj\Debug\TicTacToe.csproj.GenerateRes
 C:\Users\Will\Desktop\TicTacToe\TicTacToe\obj\Debug\TicTacToe.csproj.CoreCompileInputs.cache
 C:\Users\Will\Desktop\TicTacToe\TicTacToe\obj\Debug\TicTacToe.exe
 C:\Users\Will\Desktop\TicTacToe\TicTacToe\obj\Debug\TicTacToe.pdb
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\bin\Debug\TicTacToe.exe.config
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\bin\Debug\TicTacToe.exe
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\bin\Debug\TicTacToe.pdb
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.csprojAssemblyReference.cache
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.Properties.Resources.resources
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.csproj.GenerateResource.cache
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.csproj.CoreCompileInputs.cache
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.exe
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.pdb
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.MainForm.resources
