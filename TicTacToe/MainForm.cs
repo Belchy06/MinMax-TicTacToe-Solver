@@ -12,10 +12,14 @@ namespace TicTacToe
 
         public float LineThickness = 10;   // Line thickness in pixels
         public int BordMargin = 30; // Top, right, bottom and left margin of the grid
-        public int XOSize = 70; // Size of Xs and Os
 
         public int FieldWidth;  // Width of a single field in the grid
         public int FieldHeight; // Height of a single field in the grid
+        public int XOSize; // Size of Xs and Os
+
+        public BoardClickHandler ClickHandler;  // Current board click handler
+
+        public FieldState[,] BoardState;  // The current state of the board
 
         public MainForm()
         {
@@ -28,20 +32,18 @@ namespace TicTacToe
 
             FieldWidth = (MainPanel.Width - BordMargin * 2) / Columns;    // Set width of the grid fields
             FieldHeight = (MainPanel.Height - BordMargin * 2) / Rows;  // Set height of the grid fields
+
+            XOSize = FieldWidth / 2;    // Set size of Xs and Os to half the width of a field
+
+            BoardState = new FieldState[Columns, Rows];    // Initialize two dimensional grid array
+            for (int c = 0; c < Columns; c++) for (int r = 0; r < Rows; r++)
+                    BoardState[c, r] = FieldState.EMPTY; // Set default value to empty state
         }
 
         private void OnDraw(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            DrawGrid(g, Color.Black);
-
-            DrawX(g, 0, 0);
-            DrawX(g, 1, 1);
-            DrawX(g, 2, 2);
-
-            DrawO(g, 2, 0);
-            DrawO(g, 2, 1);
-            DrawO(g, 1, 2);
+            DrawBoardState(g);  // Draw the grid and all the placed Xs and Os 
         }
 
         private void OnMousePress(object sender, MouseEventArgs e)
@@ -52,7 +54,37 @@ namespace TicTacToe
                 int column = (e.X - BordMargin) / FieldWidth;   // Calculate column from X coordinate
                 int row = (e.Y - BordMargin) / FieldHeight; // Calculate row from Y coordinate
 
-                //TODO Do something
+                if(ClickHandler != null) ClickHandler.ClickedOnBoard(column, row);  // Pass click event onto current handler
+            }
+        }
+
+        public void SetField(FieldState state, int column, int row)
+        {
+            BoardState[column, row] = state;
+        }
+
+        public void SetClickHandler(ref BoardClickHandler handler)
+        {
+            this.ClickHandler = handler;
+        }
+
+        private void DrawBoardState(Graphics g)
+        {
+            DrawGrid(g, Color.Black);
+
+            for (int c = 0; c < Columns; c++)
+            {
+                for (int r = 0; r < Rows; r++)
+                {
+                    if(BoardState[c, r] == FieldState.O)    
+                    {
+                        DrawO(g, c, r);
+                    }
+                    else if (BoardState[c, r] == FieldState.X)
+                    {
+                        DrawX(g, c, r);
+                    }
+                }
             }
         }
 
@@ -78,7 +110,7 @@ namespace TicTacToe
             }
         }
 
-        public void DrawX(Graphics g, int column, int row)
+        private void DrawX(Graphics g, int column, int row)
         {
             DrawX(g, Color.DarkBlue, 
                 new Point(BordMargin + (column + 1) * FieldWidth - FieldWidth / 2, BordMargin + (row + 1) * FieldHeight - FieldWidth / 2), XOSize);
@@ -99,7 +131,7 @@ namespace TicTacToe
             }
         }
 
-        public void DrawO(Graphics g, int column, int row)
+        private void DrawO(Graphics g, int column, int row)
         {
             DrawO(g, Color.DarkRed,
                 new Point(BordMargin + (column + 1) * FieldWidth - FieldWidth / 2, BordMargin + (row + 1) * FieldHeight - FieldWidth / 2), XOSize);
@@ -118,4 +150,13 @@ namespace TicTacToe
         }
 
     }
+
+    [Flags]
+    public enum FieldState
+    {
+        EMPTY = -1,
+        O = 0,
+        X   = 1,
+    }
+
 }
