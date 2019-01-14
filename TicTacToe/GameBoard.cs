@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace TicTacToe
 {
-    public partial class MainForm : Form
+    public partial class GameBoard : Form
     {
         public int WindowSize = 500;    // Size of the window
         public int Rows = 3;    // Number of rows in the grid
@@ -21,7 +21,7 @@ namespace TicTacToe
 
         public FieldState[,] BoardState;  // The current state of the board
 
-        public MainForm()
+        public GameBoard()
         {
             InitializeComponent();
             Width = WindowSize; // Set width of form
@@ -63,7 +63,7 @@ namespace TicTacToe
             BoardState[column, row] = state;
         }
 
-        public void SetClickHandler(ref BoardClickHandler handler)
+        public void SetClickHandler(BoardClickHandler handler)
         {
             this.ClickHandler = handler;
         }

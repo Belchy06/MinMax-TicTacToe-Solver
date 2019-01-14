@@ -6,9 +6,18 @@ using System.Threading.Tasks;
 
 namespace TicTacToe
 {
-    class Player
+    abstract class Player
     {
-        
+        protected FieldState PlayerFigure;    // Defines whether player places Xs or Os
+        protected GameLogic Logic;
+
+        public Player(ref GameLogic logic, FieldState figure)
+        {
+            this.PlayerFigure = figure;
+            this.Logic = logic;
+        }
+
+        public abstract void RequestMove();
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace TicTacToe
 {
-    partial class MainForm
+    partial class GameBoard
     {
         /// <summary>
         /// Required designer variable.

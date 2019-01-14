@@ -9,5 +9,12 @@ namespace TicTacToe
     class BotPlayer : Player
     {
 
+        public BotPlayer(ref GameLogic logic, FieldState figure) : base(ref logic, figure) { }
+
+        public override void RequestMove()
+        {
+            //TODO Use Min Max algorithm to determine best possible move
+        }
+
     }
 }
