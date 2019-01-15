@@ -9,7 +9,7 @@ namespace TicTacToe
     class HumanPlayer : Player, BoardClickHandler
     {
 
-        public HumanPlayer(ref GameLogic logic, FieldState figure) : base(ref logic, figure) {}
+        public HumanPlayer(GameLogic logic) : base(logic) {}
 
         public override void RequestMove()
         {

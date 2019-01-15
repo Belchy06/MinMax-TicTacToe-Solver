@@ -11,9 +11,28 @@ namespace TicTacToe
         protected FieldState PlayerFigure;    // Defines whether player places Xs or Os
         protected GameLogic Logic;
 
-        public Player(ref GameLogic logic, FieldState figure)
+        public Player(GameLogic logic)
         {
-            this.PlayerFigure = figure;
+            this.Logic = logic;
+        }
+
+        public void AssignRole(FieldState playerFigure)
+        {
+            this.PlayerFigure = playerFigure;
+        }
+
+        public FieldState GetRole()
+        {
+            return this.PlayerFigure;
+        }
+
+        public GameLogic GetGameLogic()
+        {
+            return this.Logic;
+        }
+
+        public void SetGameLogic(GameLogic logic)
+        {
             this.Logic = logic;
         }
 

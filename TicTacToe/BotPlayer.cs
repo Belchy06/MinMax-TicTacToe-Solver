@@ -9,7 +9,7 @@ namespace TicTacToe
     class BotPlayer : Player
     {
 
-        public BotPlayer(ref GameLogic logic, FieldState figure) : base(ref logic, figure) { }
+        public BotPlayer(GameLogic logic) : base(logic) { }
 
         public override void RequestMove()
         {
