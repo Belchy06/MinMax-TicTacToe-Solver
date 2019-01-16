@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace TicTacToe
 {
@@ -16,6 +17,11 @@ namespace TicTacToe
         public int FieldWidth;  // Width of a single field in the grid
         public int FieldHeight; // Height of a single field in the grid
         public int XOSize; // Size of Xs and Os
+
+        public static List<Point> emptyCells = new List<Point>(9);  // List of empty cells for use in the min max algorithm. 
+                                                                    // More efficient than iterating over every cell and checking if empty
+
+        GameLogic logic;
 
         public BoardClickHandler ClickHandler;  // Current board click handler
 
@@ -37,7 +43,14 @@ namespace TicTacToe
 
             BoardState = new FieldState[Columns, Rows];    // Initialize two dimensional grid array
             for (int c = 0; c < Columns; c++) for (int r = 0; r < Rows; r++)
+                {
                     BoardState[c, r] = FieldState.EMPTY; // Set default value to empty state
+                    emptyCells.Add(new Point(c, r)); // Add cell position to list of unpopulated cells
+                }
+
+            logic = new GameLogic(this);  // Initialize game logic
+            logic.CreateNewPlayer(PlayerType.HUMAN); // Assign player 1 to X
+            logic.CreateNewPlayer(PlayerType.ROBOT); // Assign bot to O
         }
 
         private void OnDraw(object sender, PaintEventArgs e)
@@ -55,6 +68,7 @@ namespace TicTacToe
                 int row = (e.Y - BordMargin) / FieldHeight; // Calculate row from Y coordinate
 
                 if(ClickHandler != null) ClickHandler.ClickedOnBoard(column, row);  // Pass click event onto current handler
+                
             }
         }
 
