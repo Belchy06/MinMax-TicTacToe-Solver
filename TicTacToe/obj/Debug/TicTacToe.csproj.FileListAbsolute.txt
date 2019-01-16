@@ -27,4 +27,4 @@ C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.csproj.G
 C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.csproj.CoreCompileInputs.cache
 C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.exe
 C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.pdb
-C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.MainForm.resources
+C:\Users\skowa\Documents\GitHub\TicTacToe\TicTacToe\obj\Debug\TicTacToe.GameBoard.resources

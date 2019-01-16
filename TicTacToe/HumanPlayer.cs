@@ -20,8 +20,7 @@ namespace TicTacToe
 
         public void ClickedOnBoard(int column, int row)
         {
-
-            GameBoard.emptyCells.Remove(new Point(column, row)); //Remove the newly populated cell from the list of empty cells
+            //GameBoard.emptyCells.Remove(new Point(column, row)); //Remove the newly populated cell from the list of empty cells
             //TODO Pass move decision onto GameLogic object
         }
 

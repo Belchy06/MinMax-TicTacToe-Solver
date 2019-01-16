@@ -8,16 +8,23 @@ namespace TicTacToe
 {
     class MinMaxAlgorithm
     {
-        GameLogic logic = new GameLogic();
-        private long moveBias;
+        private GameLogic Logic;
+        private Player BotPlayer;
+        private long MoveBias;
 
-        private int calculateMoveBias()
+        public MinMaxAlgorithm(GameLogic logic, Player player)
         {
-            if (logic.checkWinState(new GameBoard(), PlayerType.HUMAN)) return -10;
+            this.Logic = logic;
+            this.BotPlayer = player;
+        }
 
-            else if (logic.checkWinState(new GameBoard(), PlayerType.ROBOT)) return 10;
+        private int CalculateMoveBias()
+        {
+            if (Logic.CheckWinState(Logic.GetGameBoard(), BotPlayer.GetCompetitorRole())) return -10;  // Competitor won
 
-            else if (GameBoard.emptyCells.Count == 0) return 0;
+            else if (Logic.CheckWinState(Logic.GetGameBoard(), BotPlayer.GetRole())) return 10;    // Bot Player won
+
+            else if (Logic.GetGameBoard().IsFull()) return 0;   // Draw
 
             return 0;
         }

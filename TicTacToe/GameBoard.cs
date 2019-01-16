@@ -7,25 +7,25 @@ namespace TicTacToe
 {
     public partial class GameBoard : Form
     {
-        public int WindowSize = 500;    // Size of the window
-        public int Rows = 3;    // Number of rows in the grid
-        public int Columns = 3; // Number f columns in the grid
+        private int WindowSize = 500;    // Size of the window
+        private int Rows = 3;    // Number of rows in the grid
+        private int Columns = 3; // Number f columns in the grid
 
-        public float LineThickness = 10;   // Line thickness in pixels
-        public int BordMargin = 30; // Top, right, bottom and left margin of the grid
+        private float LineThickness = 10;   // Line thickness in pixels
+        private int BordMargin = 30; // Top, right, bottom and left margin of the grid
 
-        public int FieldWidth;  // Width of a single field in the grid
-        public int FieldHeight; // Height of a single field in the grid
-        public int XOSize; // Size of Xs and Os
+        private int FieldWidth;  // Width of a single field in the grid
+        private int FieldHeight; // Height of a single field in the grid
+        private int XOSize; // Size of Xs and Os
 
-        public static List<Point> emptyCells = new List<Point>(9);  // List of empty cells for use in the min max algorithm. 
-                                                                    // More efficient than iterating over every cell and checking if empty
+        private BoardClickHandler ClickHandler;  // Current board click handler
 
-        GameLogic logic;
-
-        public BoardClickHandler ClickHandler;  // Current board click handler
-
+        private GameLogic Logic;    // Class to handle the game logic
         public FieldState[,] BoardState;  // The current state of the board
+
+        //** I am unclear on why we need this, so I decied to comment it out until things get clearer **
+        //public static List<Point> emptyCells = new List<Point>(9);    // List of empty cells for use in the min max algorithm
+                                                                        // More efficient than iterating over every cell and checking if empty
 
         public GameBoard()
         {
@@ -43,14 +43,16 @@ namespace TicTacToe
 
             BoardState = new FieldState[Columns, Rows];    // Initialize two dimensional grid array
             for (int c = 0; c < Columns; c++) for (int r = 0; r < Rows; r++)
-                {
-                    BoardState[c, r] = FieldState.EMPTY; // Set default value to empty state
-                    emptyCells.Add(new Point(c, r)); // Add cell position to list of unpopulated cells
-                }
+            {
+                BoardState[c, r] = FieldState.EMPTY; // Set default value to empty state
+                //emptyCells.Add(new Point(c, r)); // Add cell position to list of unpopulated cells
+            }
 
-            logic = new GameLogic(this);  // Initialize game logic
-            logic.CreateNewPlayer(PlayerType.HUMAN); // Assign player 1 to X
-            logic.CreateNewPlayer(PlayerType.ROBOT); // Assign bot to O
+            Logic = new GameLogic(this);  // Initialize game logic
+            Logic.CreateNewPlayer(PlayerType.HUMAN); // Assign player 1 to X
+            Logic.CreateNewPlayer(PlayerType.ROBOT); // Assign bot to O
+
+            Logic.StartGame();  // Starts the game
         }
 
         private void OnDraw(object sender, PaintEventArgs e)
@@ -80,6 +82,36 @@ namespace TicTacToe
         public void SetClickHandler(BoardClickHandler handler)
         {
             this.ClickHandler = handler;
+        }
+
+        /*
+         * Iterates through every field to check all of them are empty
+         */ 
+        public bool IsEmpty()
+        {
+            for(int column = 0; column < BoardState.Length; column++)
+            {
+                for (int row = 0; row < BoardState.Length; row++)
+                {
+                    if (BoardState[column,row] != FieldState.EMPTY) return false;
+                }
+            }
+            return true;
+        }
+
+        /*
+         * Iterates through every field to check if any of them are empty
+         */
+        public bool IsFull()
+        {
+            for (int column = 0; column < BoardState.Length; column++)
+            {
+                for (int row = 0; row < BoardState.Length; row++)
+                {
+                    if (BoardState[column, row] == FieldState.EMPTY) return false;
+                }
+            }
+            return true;
         }
 
         private void DrawBoardState(Graphics g)

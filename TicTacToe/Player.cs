@@ -26,14 +26,14 @@ namespace TicTacToe
             return this.PlayerFigure;
         }
 
+        public FieldState GetCompetitorRole()
+        {
+            return (this.PlayerFigure == FieldState.O) ? FieldState.X : FieldState.O;
+        }
+
         public GameLogic GetGameLogic()
         {
             return this.Logic;
-        }
-
-        public void SetGameLogic(GameLogic logic)
-        {
-            this.Logic = logic;
         }
 
         public abstract void RequestMove();

@@ -8,13 +8,14 @@ namespace TicTacToe
 {
     class BotPlayer : Player
     {
-        MinMaxAlgorithm algorithm = new MinMaxAlgorithm();
+        MinMaxAlgorithm Algorithm;
 
-        public BotPlayer(GameLogic logic) : base(logic) { }
+        public BotPlayer(GameLogic logic) : base(logic) {
+            this.Algorithm = new MinMaxAlgorithm(logic, this);
+        }
 
         public override void RequestMove()
         {
-
             //TODO Use Min Max algorithm to determine best possible move
         }
 
