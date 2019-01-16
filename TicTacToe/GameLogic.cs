@@ -80,8 +80,8 @@ namespace TicTacToe
              *  I don't think it's necessary to provide a property 'N' that describes the number of pieces in a row to win, because
              *  in Tic Tac Toe games that is usually equal to the number of rows and columns.
              *  However, if we want to do that we have to consider that the last fields in a row will not be checked,
-             *  if the number of pieces needed is lower than the fields in a row. So if, lets say, N equals 2, but it's
-             *  a 3x3 grid, this method will alredy break at the first column in the row, even if the next two columns both have
+             *  if the number of pieces needed, is lower than the fields in a row. So if, lets say, N equals 2, but it's
+             *  a 3x3 grid, the loop will alredy break at the first column in the row, even if the next two columns both have
              *  the correct field state. So we either have to fix both methods or just loop through the entire row to begin with 
              *  and scrap the 'N' property
              *  - Sam
