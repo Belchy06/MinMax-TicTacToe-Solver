@@ -14,7 +14,6 @@ namespace TicTacToe
         private Player Player2;
 
         private readonly int N = 3; // Number of pieces in a row to win
-        private int MoveCount = 0; // Number of moves that have been played
         private PlayerTurn CurrentTurn; // Describes which player's turn it is
 
         public GameLogic(GameBoard board)
@@ -30,7 +29,7 @@ namespace TicTacToe
         public void StartGame()
         {
             this.CurrentTurn = PlayerTurn.PlayerOne;   // Player1 begins
-            MessageBox.Show("It's your turn player 1!");
+            MessageBox.Show("It's your turn, Player!");
             Player1.RequestMove();  // Tell Player that it's his time to play!
         }
 
@@ -76,7 +75,6 @@ namespace TicTacToe
             FieldState Field = player.GetRole();
             Board.SetField(Field, column, row);
             Board.Refresh();
-            MoveCount++;
             CheckWinState(column, row, Field);
             Update();                           
         }
@@ -196,7 +194,7 @@ namespace TicTacToe
             }
 
             // Check for draw
-            if (MoveCount == 9)
+            if (Board.IsFull())
             {
                 MessageBox.Show("DRAW");
                 Application.Restart();

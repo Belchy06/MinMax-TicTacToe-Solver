@@ -48,14 +48,17 @@ namespace TicTacToe
         {
             this.Board = board;
 
+            EndState X = Logic.CheckWinState(Board, FieldState.X);
+            EndState O = Logic.CheckWinState(Board, FieldState.O);
+
             // Base case
-            if (Logic.CheckWinState(Board, FieldState.X) == EndState.XWin)
+            if (X  == EndState.XWin)
             {
                 return new AIMove(null, null, -10); // Player wins
-            } else if (Logic.CheckWinState(Board, FieldState.O) == EndState.OWin)
+            } else if (O == EndState.OWin)
             {
                 return new AIMove(null, null, 10); // AI wins
-            } else if(Logic.CheckWinState(Board, FieldState.X) == EndState.Draw || Logic.CheckWinState(Board, FieldState.O) == EndState.Draw)
+            } else if(X == EndState.Draw || O == EndState.Draw)
             {
                 return new AIMove(null, null, 0); // Draw
             }
