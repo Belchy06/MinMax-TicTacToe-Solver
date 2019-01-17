@@ -1,3 +1,8 @@
 .vs/
-*.ide
-*.ide
+.vs/TicTacToe/v15/Server/sqlite3/storage.ide-wal
+.vs/TicTacToe/v15/Server/sqlite3/storage.ide-shm
+.vs/TicTacToe/v15/.suo
+TicTacToe/bin/Debug/TicTacToe.exe
+TicTacToe/bin/Debug/TicTacToe.exe.config
+TicTacToe/bin/Debug/TicTacToe.pdb
+TicTacToe/obj/Debug/TicTacToe.csproj.CoreCompileInputs.cache

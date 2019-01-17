@@ -4,24 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace TicTacToe
 {
     class HumanPlayer : Player, BoardClickHandler
     {
 
-        public HumanPlayer(GameLogic logic) : base(logic) {}
+        public HumanPlayer(GameLogic logic) : base(logic)
+        {
+            this.PlayerType = PlayerType.HUMAN;
+        }
 
 
         public override void RequestMove()
         {
-            this.Logic.GetGameBoard().SetClickHandler(this);    // Ready to listen to click events
+            this.Logic.GetGameBoard().SetClickHandler(this);    // Ready to listen to click events          
         }
 
         public void ClickedOnBoard(int column, int row)
         {
-            //GameBoard.emptyCells.Remove(new Point(column, row)); //Remove the newly populated cell from the list of empty cells
-            //TODO Pass move decision onto GameLogic object
+            Logic.MakeMove(column, row, this);
         }
 
     }

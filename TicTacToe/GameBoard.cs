@@ -8,8 +8,7 @@ namespace TicTacToe
     public partial class GameBoard : Form
     {
         private int WindowSize = 500;    // Size of the window
-        private int Rows = 3;    // Number of rows in the grid
-        private int Columns = 3; // Number f columns in the grid
+        private static readonly int BoardSize = 3; // Consolidated Rows and Columns into one variable
 
         private float LineThickness = 10;   // Line thickness in pixels
         private int BordMargin = 30; // Top, right, bottom and left margin of the grid
@@ -23,38 +22,34 @@ namespace TicTacToe
         private GameLogic Logic;    // Class to handle the game logic
         public FieldState[,] BoardState;  // The current state of the board
 
-        //** I am unclear on why we need this, so I decied to comment it out until things get clearer **
-        //public static List<Point> emptyCells = new List<Point>(9);    // List of empty cells for use in the min max algorithm
-                                                                        // More efficient than iterating over every cell and checking if empty
-
-       /* In the min max algorithm, the algorithm loops over each empty cell and determines whether placing a piece in that position will lead
-          to a win based on the bias calculated. I used this list of points so that algorithm now from which positions to loop through right away
-          as opposed to needing to search the board for empty spaces each time the alogorithm is called. - Will */
-
         public GameBoard()
         {
             InitializeComponent();
+            InitGame();
+        }
+
+        public void InitGame()
+        {
             Width = WindowSize; // Set width of form
             Height = WindowSize;    // Set height of form
 
             MainPanel.Paint += OnDraw;  // Add a Paint Event Handler
             MainPanel.MouseDown += OnMousePress;    // Add a Mouse Event Handler
 
-            FieldWidth = (MainPanel.Width - BordMargin * 2) / Columns;    // Set width of the grid fields
-            FieldHeight = (MainPanel.Height - BordMargin * 2) / Rows;  // Set height of the grid fields
+            FieldWidth = (MainPanel.Width - BordMargin * 2) / BoardSize;    // Set width of the grid fields
+            FieldHeight = (MainPanel.Height - BordMargin * 2) / BoardSize;  // Set height of the grid fields
 
             XOSize = FieldWidth / 2;    // Set size of Xs and Os to half the width of a field
 
-            BoardState = new FieldState[Columns, Rows];    // Initialize two dimensional grid array
-            for (int c = 0; c < Columns; c++) for (int r = 0; r < Rows; r++)
+            BoardState = new FieldState[BoardSize, BoardSize];    // Initialize two dimensional grid array
+            for (int c = 0; c < BoardSize; c++) for (int r = 0; r < BoardSize; r++)
             {
                 BoardState[c, r] = FieldState.EMPTY; // Set default value to empty state
-                //emptyCells.Add(new Point(c, r)); // Add cell position to list of unpopulated cells
             }
 
             Logic = new GameLogic(this);  // Initialize game logic
-            Logic.CreateNewPlayer(PlayerType.HUMAN); // Assign player 1 to X
-            Logic.CreateNewPlayer(PlayerType.ROBOT); // Assign bot to O
+            Logic.CreateNewPlayer(PlayerType.ROBOT); // Assign player 1 to X
+            Logic.CreateNewPlayer(PlayerType.HUMAN); // Assign bot to O
 
             Logic.StartGame();  // Starts the game
         }
@@ -80,7 +75,12 @@ namespace TicTacToe
 
         public void SetField(FieldState state, int column, int row)
         {
-            BoardState[column, row] = state;
+            BoardState[column, row] = state; // Check to see if grid is empty before placing
+        }
+
+        public FieldState GetField(int column, int row)
+        {
+            return BoardState[column, row]; // Check to see if grid is empty before placing
         }
 
         public void SetClickHandler(BoardClickHandler handler)
@@ -88,19 +88,14 @@ namespace TicTacToe
             this.ClickHandler = handler;
         }
 
-        /*
-         * Iterates through every field to check all of them are empty
-         */ 
-        public bool IsEmpty()
+        public int GetBoardSize()
         {
-            for(int column = 0; column < BoardState.Length; column++)
-            {
-                for (int row = 0; row < BoardState.Length; row++)
-                {
-                    if (BoardState[column,row] != FieldState.EMPTY) return false;
-                }
-            }
-            return true;
+            return BoardSize;
+        }
+
+        public int MaxBoardIndex()
+        {
+            return BoardSize - 1;
         }
 
         /*
@@ -108,9 +103,9 @@ namespace TicTacToe
          */
         public bool IsFull()
         {
-            for (int column = 0; column < BoardState.Length; column++)
+            for (int column = 0; column < BoardState.Length/3; column++) //Divide by 3 as .Length calculates the 3 x 3 of the array as 9
             {
-                for (int row = 0; row < BoardState.Length; row++)
+                for (int row = 0; row < BoardState.Length/3; row++)
                 {
                     if (BoardState[column, row] == FieldState.EMPTY) return false;
                 }
@@ -122,9 +117,9 @@ namespace TicTacToe
         {
             DrawGrid(g, Color.Black);
 
-            for (int c = 0; c < Columns; c++)
+            for (int c = 0; c < BoardSize; c++)
             {
-                for (int r = 0; r < Rows; r++)
+                for (int r = 0; r < BoardSize; r++)
                 {
                     if(BoardState[c, r] == FieldState.O)    
                     {
@@ -144,13 +139,13 @@ namespace TicTacToe
             {
                 pen.Width = LineThickness;
 
-                for (int row = 1; row < Rows; row++)    // Draw all horizontal lines
+                for (int row = 1; row < BoardSize; row++)    // Draw all horizontal lines
                 {
                     g.DrawLine(pen, new Point(BordMargin, BordMargin + FieldHeight * row),
                         new Point(this.MainPanel.Width - BordMargin, BordMargin + FieldHeight * row));
                 }
 
-                for (int column = 1; column < Columns; column++)    // Draw all vertical lines
+                for (int column = 1; column < BoardSize; column++)    // Draw all vertical lines
                 {
                     g.DrawLine(pen, new Point(BordMargin + FieldWidth * column, BordMargin),
                         new Point(BordMargin + FieldWidth * column, this.MainPanel.Height - BordMargin));
@@ -198,7 +193,6 @@ namespace TicTacToe
                 pen.Dispose();
             }
         }
-
     }
 
     [Flags]
@@ -207,6 +201,14 @@ namespace TicTacToe
         EMPTY = -1,
         O = 0,
         X   = 1,
+    }
+
+    public enum EndState
+    {
+        XWin = -1,
+        Draw = 0,
+        OWin = 1,
+        Other = 2,
     }
 
 }

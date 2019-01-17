@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace TicTacToe
 {
@@ -12,9 +9,8 @@ namespace TicTacToe
         private Player Player1;
         private Player Player2;
 
-        private int N = 3; // Number of pieces in a row to win
-        private int MoveCount = 0; // Number of moves that have been played
-        private FieldState CurrentTurn; // Describes which player's turn it is
+        private readonly int NumWinPieces = 3; // Number of pieces in a row to win
+        private PlayerTurn CurrentTurn; // Describes which player's turn it is
 
         public GameLogic(GameBoard board)
         {
@@ -28,7 +24,7 @@ namespace TicTacToe
 
         public void StartGame()
         {
-            this.CurrentTurn = Player1.GetRole();   // Player1 begins
+            this.CurrentTurn = PlayerTurn.PlayerOne;   // Player1 begins
             Player1.RequestMove();  // Tell Player that it's his time to play!
         }
 
@@ -69,115 +65,163 @@ namespace TicTacToe
             return Player2;
         }
 
-        /**
-         * This method is called at the end of a players turn. x and y are the position of the recently placed tile. whether it be from bot or player
-         */
-        public void CheckWinState(int moveX, int moveY, FieldState fieldToSearch)
+        public void MakeMove(int column, int row, Player player)
         {
-
-            /**
-             *  COMMENT
-             *  I don't think it's necessary to provide a property 'N' that describes the number of pieces in a row to win, because
-             *  in Tic Tac Toe games that is usually equal to the number of rows and columns.
-             *  However, if we want to do that we have to consider that the last fields in a row will not be checked,
-             *  if the number of pieces needed, is lower than the fields in a row. So if, lets say, N equals 2, but it's
-             *  a 3x3 grid, the loop will alredy break at the first column in the row, even if the next two columns both have
-             *  the correct field state. So we either have to fix both methods or just loop through the entire row to begin with 
-             *  and scrap the 'N' property
-             *  - Sam
-             */
-           
-            // Check for a win based on the column of the move 
-            for(int i = 0; i < N; i++)
+            FieldState Field = player.GetRole();
+            if (Board.GetField(column, row) == FieldState.EMPTY)
             {
-                if (Board.BoardState[moveX, i] != fieldToSearch) break;
-                if (i == N - 1) ; // TODO report win for playerType
-            }
+                Board.SetField(Field, column, row);
+                Board.Refresh();
 
-            // Check for win based on the row of the move
-            for(int i = 0; i < N; i++)
-            {
-                if (Board.BoardState[i, moveY] != fieldToSearch) break;
-                if (i == N - 1) ; //TODO report win for playerType 
-            }
-
-            // Check for win diagonally
-            if (moveX == moveY)
-            {
-                for(int i = 0; i < N; i++)
+                WinState state = GetWinState();
+                if (state == WinState.DRAW)
                 {
-                    if (Board.BoardState[i, i] != fieldToSearch) break;
-                    if (i == N - 1) ; //TODO report win for playerType
+                    MessageBox.Show("Draw!");
+                    Application.Exit();
                 }
-            }
-
-            // Check for win anti-diagonally
-            if (moveX + moveY == N - 1)
-            {
-                for(int i = 0; i < N; i++)
+                else if (state == WinState.XWIN)
                 {
-                    if (Board.BoardState[i, ((N - 1) - i)] != fieldToSearch) break;
-                    if (i == N - 1) ; //TODO report win for playerType
+                    MessageBox.Show("X WINS");
+                    Application.Exit();
                 }
-            }
-
-            // Check for draw
-            if(MoveCount == (Math.Pow(N, 2) - 1))
-            {
-                //TODO report draw
+                else if (state == WinState.OWIN)
+                {
+                    MessageBox.Show("O WINS");
+                    Application.Exit();
+                }
+                else
+                {
+                    FinishedMove();
+                }
             }
         }
 
-        /**
-         * This method is called at the end of a players turn. x and y are the position of the recently placed tile. whether it be from bot or player
-         */
-        public bool CheckWinState(GameBoard board, FieldState fieldToSearch)
+        public void FinishedMove()
         {
-
-            // Check for a win based on the column of the move
-            for (int x = 0; x < N; x++)
+            if (CurrentTurn == PlayerTurn.PlayerOne)
             {
-                for (int y = 0; y < N; y++)
-                {
-                    if (Board.BoardState[x, y] != fieldToSearch) break;
-                    if (y == N - 1) return true;
-                }
+                CurrentTurn = PlayerTurn.PlayerTwo;
+                Player2.RequestMove();
             }
-
-
-            // Check for win based on the row of the move
-            for (int y = 0; y < N; y++)
+            else
             {
-                for (int x = 0; x < N; x++)
-                {
-                    if (Board.BoardState[x, y] != fieldToSearch) break;
-                    if (y == N - 1) return true;
-                }
+                CurrentTurn = PlayerTurn.PlayerOne;
+                Player1.RequestMove();            
             }
-
-            // Check for win diagonally
-            for (int i = 0; i < N; i++)
-            {
-                if (Board.BoardState[i, i] != fieldToSearch) break;
-                if (i == N - 1) return true;
-            }
-
-            // Check for win anti-diagonally
-            for (int i = 0; i < N; i++)
-            {
-                if (Board.BoardState[i, ((N - 1) - i)] != fieldToSearch) break;
-                if (i == N - 1) return true;
-            }
-
-            // Check for draw
-            if (MoveCount == (Math.Pow(N, 2) - 1))
-            {
-                return false;
-            }
-
-            return false;
         }
 
+        public WinState GetWinState()
+        {
+            FieldState LastPiece = FieldState.EMPTY;
+            int EqualPiecesInRow = 0;
+
+            // Check columns
+            for(int column = 0; column < Board.GetBoardSize(); column++)
+            {
+                for(int row = 0; row < Board.GetBoardSize(); row++)
+                {
+                    if (LastPiece != Board.BoardState[column, row]) EqualPiecesInRow = 0;
+                    LastPiece = Board.BoardState[column, row];
+                    EqualPiecesInRow++;
+                    if(EqualPiecesInRow == NumWinPieces && LastPiece != FieldState.EMPTY)
+                    {
+                        return LastPiece == FieldState.X ? WinState.XWIN : WinState.OWIN;
+                    }
+                }
+                LastPiece = FieldState.EMPTY;
+                EqualPiecesInRow = 0;
+            }
+
+            LastPiece = FieldState.EMPTY;
+            EqualPiecesInRow = 0;
+
+            // Check rows
+            for (int row = 0; row < Board.GetBoardSize(); row++)
+            {
+                for (int column = 0; column < Board.GetBoardSize(); column++)
+                {
+                    if (LastPiece != Board.BoardState[column, row]) EqualPiecesInRow = 0;
+                    LastPiece = Board.BoardState[column, row];
+                    EqualPiecesInRow++;
+                    if (EqualPiecesInRow == NumWinPieces && LastPiece != FieldState.EMPTY)
+                    {
+                        return LastPiece == FieldState.X ? WinState.XWIN : WinState.OWIN;
+                    }
+                }
+                LastPiece = FieldState.EMPTY;
+                EqualPiecesInRow = 0;
+            }
+
+            LastPiece = FieldState.EMPTY;
+            EqualPiecesInRow = 0;
+
+            // Check diagonals
+            for (int row = NumWinPieces-1; row < Board.GetBoardSize(); row++)
+            {
+                for(int column = 0; column <= row; column++)
+                {
+                    if (LastPiece != Board.BoardState[column, row-column]) EqualPiecesInRow = 0;
+                    LastPiece = Board.BoardState[column, row-column];
+                    EqualPiecesInRow++;
+                    if (EqualPiecesInRow == NumWinPieces && LastPiece != FieldState.EMPTY)
+                    {
+                        return LastPiece == FieldState.X ? WinState.XWIN : WinState.OWIN;
+                    }
+                }
+                if (row > 0)
+                {
+                    LastPiece = FieldState.EMPTY;
+                    EqualPiecesInRow = 0;
+                    for (int column = Board.GetBoardSize() - 1; column >= row; column--)
+                    {
+                        if (LastPiece != Board.BoardState[column, row + (Board.GetBoardSize() - 1 - column)]) EqualPiecesInRow = 0;
+                        LastPiece = Board.BoardState[column, row + (Board.GetBoardSize() - 1 - column)];
+                        EqualPiecesInRow++;
+                        if (EqualPiecesInRow == NumWinPieces && LastPiece != FieldState.EMPTY)
+                        {
+                            return LastPiece == FieldState.X ? WinState.XWIN : WinState.OWIN;
+                        }
+                    }
+                }
+                LastPiece = FieldState.EMPTY;
+                EqualPiecesInRow = 0;
+            }
+
+            // Check anti diagonals
+            for (int row = Board.GetBoardSize() - 1 - (NumWinPieces - 1); row >= 0; row--)
+            {
+                for (int column = 0; column <= Board.GetBoardSize() - 1 - row; column++)
+                {
+                    if (LastPiece != Board.BoardState[column, row + column]) EqualPiecesInRow = 0;
+                    LastPiece = Board.BoardState[column, row + column];
+                    EqualPiecesInRow++;
+                    if (EqualPiecesInRow == NumWinPieces && LastPiece != FieldState.EMPTY)
+                    {
+                        return LastPiece == FieldState.X ? WinState.XWIN : WinState.OWIN;
+                    }
+                }
+                if (row > 0)
+                {
+                    LastPiece = FieldState.EMPTY;
+                    EqualPiecesInRow = 0;
+                    for (int column = Board.GetBoardSize() - 1; column >= row; column--)
+                    {
+                        if (LastPiece != Board.BoardState[column, row + (Board.GetBoardSize() - 1 - column)]) EqualPiecesInRow = 0;
+                        LastPiece = Board.BoardState[column, row + (Board.GetBoardSize() - 1 - column)];
+                        EqualPiecesInRow++;
+                        if (EqualPiecesInRow == NumWinPieces && LastPiece != FieldState.EMPTY)
+                        {
+                            return LastPiece == FieldState.X ? WinState.XWIN : WinState.OWIN;
+                        }
+                    }
+                }
+                LastPiece = FieldState.EMPTY;
+                EqualPiecesInRow = 0;
+            }
+
+            return Board.IsFull() ? WinState.DRAW : WinState.INGAME;
+        }
+        
     }
 
     [Flags]
@@ -185,6 +229,21 @@ namespace TicTacToe
     {
         HUMAN = 0,
         ROBOT = 1,
+    }
+
+    public enum PlayerTurn
+    {
+        PlayerOne = 1,
+        PlayerTwo = 2,
+    }
+
+    [Flags]
+    public enum WinState
+    {
+        INGAME = -1,
+        XWIN = 0,
+        OWIN = 1,
+        DRAW = 2
     }
 
 }
