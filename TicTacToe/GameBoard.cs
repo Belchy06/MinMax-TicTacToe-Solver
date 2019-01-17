@@ -79,6 +79,11 @@ namespace TicTacToe
             BoardState[column, row] = state; // Check to see if grid is empty before placing
         }
 
+        public FieldState GetField(int column, int row)
+        {
+            return BoardState[column, row]; // Check to see if grid is empty before placing
+        }
+
         public void SetClickHandler(BoardClickHandler handler)
         {
             this.ClickHandler = handler;

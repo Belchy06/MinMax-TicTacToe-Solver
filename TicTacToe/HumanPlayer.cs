@@ -24,6 +24,7 @@ namespace TicTacToe
 
         public void ClickedOnBoard(int column, int row)
         {
+
             Logic.MakeMove(column, row, this);
             //TODO Pass move decision onto GameLogic object
         }

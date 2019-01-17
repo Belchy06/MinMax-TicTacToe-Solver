@@ -73,10 +73,13 @@ namespace TicTacToe
         public void MakeMove(int column, int row, Player player)
         {
             FieldState Field = player.GetRole();
-            Board.SetField(Field, column, row);
-            Board.Refresh();
-            CheckWinState(column, row, Field);
-            Update();                           
+            if(Board.GetField(column, row) == FieldState.EMPTY)
+            {
+                Board.SetField(Field, column, row);
+                Board.Refresh();
+                CheckWinState(column, row, Field);
+                Update();
+            }                         
         }
 
         public void Update()
