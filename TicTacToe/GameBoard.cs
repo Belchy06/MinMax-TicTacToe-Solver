@@ -27,6 +27,10 @@ namespace TicTacToe
         //public static List<Point> emptyCells = new List<Point>(9);    // List of empty cells for use in the min max algorithm
                                                                         // More efficient than iterating over every cell and checking if empty
 
+       /* In the min max algorithm, the algorithm loops over each empty cell and determines whether placing a piece in that position will lead
+          to a win based on the bias calculated. I used this list of points so that algorithm now from which positions to loop through right away
+          as opposed to needing to search the board for empty spaces each time the alogorithm is called. - Will */
+
         public GameBoard()
         {
             InitializeComponent();
