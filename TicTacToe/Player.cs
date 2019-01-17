@@ -10,6 +10,7 @@ namespace TicTacToe
     {
         protected FieldState PlayerFigure;    // Defines whether player places Xs or Os
         protected GameLogic Logic;
+        protected PlayerType PlayerType;
 
         public Player(GameLogic logic)
         {
@@ -34,6 +35,11 @@ namespace TicTacToe
         public GameLogic GetGameLogic()
         {
             return this.Logic;
+        }
+
+        public PlayerType GetPlayerType()
+        {
+            return this.PlayerType;
         }
 
         public abstract void RequestMove();

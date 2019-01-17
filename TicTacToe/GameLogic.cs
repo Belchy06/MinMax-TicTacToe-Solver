@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,9 @@ namespace TicTacToe
         private Player Player1;
         private Player Player2;
 
-        private int N = 3; // Number of pieces in a row to win
+        private readonly int N = 3; // Number of pieces in a row to win
         private int MoveCount = 0; // Number of moves that have been played
-        private FieldState CurrentTurn; // Describes which player's turn it is
+        private PlayerTurn CurrentTurn; // Describes which player's turn it is
 
         public GameLogic(GameBoard board)
         {
@@ -28,7 +29,8 @@ namespace TicTacToe
 
         public void StartGame()
         {
-            this.CurrentTurn = Player1.GetRole();   // Player1 begins
+            this.CurrentTurn = PlayerTurn.PlayerOne;   // Player1 begins
+            MessageBox.Show("It's your turn player 1!");
             Player1.RequestMove();  // Tell Player that it's his time to play!
         }
 
@@ -36,12 +38,12 @@ namespace TicTacToe
         {
             if(this.Player1 == null)
             {
-                this.Player1 = type == PlayerType.HUMAN ? (Player)new HumanPlayer(this) : (Player)new BotPlayer(this);
+                this.Player1 = type == PlayerType.HUMAN ? (Player)new HumanPlayer(this) : (Player)new BotPlayer(this, Board);
                 this.Player1.AssignRole(FieldState.X);
                 return this.Player1;
             } else if(this.Player2 == null)
             {
-                this.Player2 = type == PlayerType.HUMAN ? (Player)new HumanPlayer(this) : (Player)new BotPlayer(this);
+                this.Player2 = type == PlayerType.HUMAN ? (Player)new HumanPlayer(this) : (Player)new BotPlayer(this, Board);
                 this.Player2.AssignRole(FieldState.O);
                 return this.Player2;
             }
@@ -69,6 +71,31 @@ namespace TicTacToe
             return Player2;
         }
 
+        public void MakeMove(int column, int row, Player player)
+        {
+            FieldState Field = player.GetRole();
+            Board.SetField(Field, column, row);
+            Board.Refresh();
+            MoveCount++;
+            CheckWinState(column, row, Field);
+            Update();                           
+        }
+
+        public void Update()
+        {
+            if (CurrentTurn == PlayerTurn.PlayerOne)
+            {
+                CurrentTurn = PlayerTurn.PlayerTwo;
+                Player2.RequestMove();
+            }
+            else
+            {
+                CurrentTurn = PlayerTurn.PlayerOne;
+                Player1.RequestMove();            
+            }
+            
+        }
+
         /**
          * This method is called at the end of a players turn. x and y are the position of the recently placed tile. whether it be from bot or player
          */
@@ -91,14 +118,37 @@ namespace TicTacToe
             for(int i = 0; i < N; i++)
             {
                 if (Board.BoardState[moveX, i] != fieldToSearch) break;
-                if (i == N - 1) ; // TODO report win for playerType
+                if (i == N - 1)
+                {
+                    if(fieldToSearch == FieldState.X)
+                    {
+                        MessageBox.Show("Player 1 Wins!");
+                        Application.Restart();
+                    } else
+                    {
+                        MessageBox.Show("AI Wins!");
+                        Application.Restart();
+                    }
+                } 
             }
 
             // Check for win based on the row of the move
             for(int i = 0; i < N; i++)
             {
                 if (Board.BoardState[i, moveY] != fieldToSearch) break;
-                if (i == N - 1) ; //TODO report win for playerType 
+                if (i == N - 1)
+                {
+                    if (fieldToSearch == FieldState.X)
+                    {
+                        MessageBox.Show("Player 1 Wins!");
+                        Application.Restart();
+                    }
+                    else
+                    {
+                        MessageBox.Show("AI Wins!");
+                        Application.Restart();
+                    }
+                }
             }
 
             // Check for win diagonally
@@ -107,7 +157,19 @@ namespace TicTacToe
                 for(int i = 0; i < N; i++)
                 {
                     if (Board.BoardState[i, i] != fieldToSearch) break;
-                    if (i == N - 1) ; //TODO report win for playerType
+                    if (i == N - 1)
+                    {
+                        if (fieldToSearch == FieldState.X)
+                        {
+                            MessageBox.Show("Player 1 Wins!");
+                            Application.Restart();
+                        }
+                        else
+                        {
+                            MessageBox.Show("AI Wins!");
+                            Application.Restart();
+                        }
+                    }
                 }
             }
 
@@ -117,30 +179,50 @@ namespace TicTacToe
                 for(int i = 0; i < N; i++)
                 {
                     if (Board.BoardState[i, ((N - 1) - i)] != fieldToSearch) break;
-                    if (i == N - 1) ; //TODO report win for playerType
+                    if (i == N - 1)
+                    {
+                        if (fieldToSearch == FieldState.X)
+                        {
+                            MessageBox.Show("Player 1 Wins!");
+                            Application.Restart();
+                        }
+                        else
+                        {
+                            MessageBox.Show("AI Wins!");
+                            Application.Restart();
+                        }
+                    }
                 }
             }
 
             // Check for draw
-            if(MoveCount == (Math.Pow(N, 2) - 1))
+            if (MoveCount == 9)
             {
-                //TODO report draw
+                MessageBox.Show("DRAW");
+                Application.Restart();
             }
         }
 
         /**
          * This method is called at the end of a players turn. x and y are the position of the recently placed tile. whether it be from bot or player
          */
-        public bool CheckWinState(GameBoard board, FieldState fieldToSearch)
+        public EndState CheckWinState(GameBoard board, FieldState fieldToSearch)
         {
-
+            EndState end;
+            if(fieldToSearch == FieldState.X)
+            {
+                end = EndState.XWin;
+            } else
+            {
+                end = EndState.OWin;
+            }
             // Check for a win based on the column of the move
             for (int x = 0; x < N; x++)
             {
                 for (int y = 0; y < N; y++)
                 {
                     if (Board.BoardState[x, y] != fieldToSearch) break;
-                    if (y == N - 1) return true;
+                    if (y == N - 1) return end;
                 }
             }
 
@@ -151,7 +233,7 @@ namespace TicTacToe
                 for (int x = 0; x < N; x++)
                 {
                     if (Board.BoardState[x, y] != fieldToSearch) break;
-                    if (y == N - 1) return true;
+                    if (x == N - 1) return end;
                 }
             }
 
@@ -159,23 +241,23 @@ namespace TicTacToe
             for (int i = 0; i < N; i++)
             {
                 if (Board.BoardState[i, i] != fieldToSearch) break;
-                if (i == N - 1) return true;
+                if (i == N - 1) return end;
             }
 
             // Check for win anti-diagonally
             for (int i = 0; i < N; i++)
             {
                 if (Board.BoardState[i, ((N - 1) - i)] != fieldToSearch) break;
-                if (i == N - 1) return true;
+                if (i == N - 1) return end;
             }
 
             // Check for draw
-            if (MoveCount == (Math.Pow(N, 2) - 1))
+            if(board.IsFull())
             {
-                return false;
+                return EndState.Draw;
             }
 
-            return false;
+            return EndState.Other;
         }
 
     }
@@ -185,6 +267,12 @@ namespace TicTacToe
     {
         HUMAN = 0,
         ROBOT = 1,
+    }
+
+    public enum PlayerTurn
+    {
+        PlayerOne = 1,
+        PlayerTwo = 2,
     }
 
 }
