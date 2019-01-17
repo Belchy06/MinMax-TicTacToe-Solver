@@ -11,12 +11,11 @@ namespace TicTacToe
     class MinMaxAlgorithm
     {
         private GameLogic Logic;
-        private GameBoard Board;
         private Player BotPlayer;
         
 
         // Should move this to a class but it's okay as a struct for now
-        // This structure is used to store the variables of a move. Once the optimal move is found, the X and Y variables will be used in Board.SetField
+        // This structure is used to store the variables of a move. Once the optimal move is found, the X and Y variables will be used in Logic.GetGameBoard().SetField
         // Use of nullable as struct constructors must contain all variables, so for when we don't want to give X and value, we give it Null
         public struct AIMove 
         {
@@ -31,66 +30,58 @@ namespace TicTacToe
             public Nullable<int> Score;
         }
 
-        public MinMaxAlgorithm(GameLogic logic, Player player, GameBoard board)
+        public MinMaxAlgorithm(GameLogic logic, Player player)
         {
             this.Logic = logic;
             this.BotPlayer = player;
-            this.Board = board;
         }
 
-        public void PerformMove(GameBoard board)
+        public void PerformMove()
         {
-            AIMove bestMove = CalculateBestMove(board, Logic.GetPlayer2());
-            Logic.MakeMove((int)bestMove.X, (int)bestMove.Y, Logic.GetPlayer2());
+            AIMove bestMove = CalculateBestMove(BotPlayer);
+            Logic.MakeMove((int)bestMove.X, (int)bestMove.Y, BotPlayer);
         }
 
-        public AIMove CalculateBestMove(GameBoard board, Player player)
+        public AIMove CalculateBestMove(Player player)
         {
-            this.Board = board;
-
-            EndState X = Logic.CheckWinState(Board, FieldState.X);
-            EndState O = Logic.CheckWinState(Board, FieldState.O);
+            WinState W = Logic.GetWinState();
 
             // Base case
-            if (X  == EndState.XWin)
+            if (W == WinState.XWIN)
             {
-                return new AIMove(null, null, -10); // Player wins
-            } else if (O == EndState.OWin)
+                return new AIMove(null, null, BotPlayer.GetRole() == FieldState.X ? 10 : -10); // Win for X
+            }
+            else if (W == WinState.OWIN)
             {
-                return new AIMove(null, null, 10); // AI wins
-            } else if(X == EndState.Draw || O == EndState.Draw)
+                return new AIMove(null, null, BotPlayer.GetRole() == FieldState.O ? 10 : -10); // Win for O
+            }
+            else if (W == WinState.DRAW)
             {
                 return new AIMove(null, null, 0); // Draw
             }
 
-            List<AIMove> Moves = new List<AIMove>(); //Store a list of the recursive moves
-
             FieldState Field = player.GetRole();
 
+            List<AIMove> Moves = new List<AIMove>(); //Store a list of the recursive moves
+
             // Do recursive function calls and construct list of moves
-            for (int y = 0; y < GameBoard.getBoardSize(); y++)
+            for (int y = 0; y < Logic.GetGameBoard().GetBoardSize(); y++)
             {
-                for (int x = 0; x < GameBoard.getBoardSize(); x++) // Iterates through the board to find empty cells. 
+                for (int x = 0; x < Logic.GetGameBoard().GetBoardSize(); x++) // Iterates through the board to find empty cells. 
                                                                    // This is where I would have used the list of empty cells
                 {
-                    if (board.BoardState[x,y] == FieldState.EMPTY)
+                    if (Logic.GetGameBoard().BoardState[x,y] == FieldState.EMPTY)
                     {
                         AIMove move; // Initialize struct
                         move.X = x;     // Store x value of current empty cell
                         move.Y = y;     // Store y value of current empty cell
-                        board.SetField(Field, x, y);
+                        Logic.GetGameBoard().SetField(Field, x, y);
 
-                        if(player.GetPlayerType() == PlayerType.ROBOT) 
-                        {
-                            move.Score = CalculateBestMove(Board, Logic.GetPlayer1()).Score; // If the Bot called this function then call the function again but for the player
-                        }
-                        else
-                        {
-                            move.Score = CalculateBestMove(Board, Logic.GetPlayer2()).Score; // Else the player called the function and so now recall for the robot
-                        }
-                        
+                        // Recursivly call method with the opponent of the current player 
+                        move.Score = CalculateBestMove(player == Logic.GetPlayer1() ? Logic.GetPlayer2() : Logic.GetPlayer1()).Score;
+
                         Moves.Add(move);
-                        board.SetField(FieldState.EMPTY, x, y); // Set the board cell back to empty after testing move
+                        Logic.GetGameBoard().SetField(FieldState.EMPTY, x, y); // Set the board cell back to empty after testing move
                     }
                 }
             }

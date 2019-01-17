@@ -22,7 +22,6 @@ namespace TicTacToe
         private GameLogic Logic;    // Class to handle the game logic
         public FieldState[,] BoardState;  // The current state of the board
 
-
         public GameBoard()
         {
             InitializeComponent();
@@ -44,13 +43,13 @@ namespace TicTacToe
 
             BoardState = new FieldState[BoardSize, BoardSize];    // Initialize two dimensional grid array
             for (int c = 0; c < BoardSize; c++) for (int r = 0; r < BoardSize; r++)
-                {
-                    BoardState[c, r] = FieldState.EMPTY; // Set default value to empty state
-                }
+            {
+                BoardState[c, r] = FieldState.EMPTY; // Set default value to empty state
+            }
 
             Logic = new GameLogic(this);  // Initialize game logic
-            Logic.CreateNewPlayer(PlayerType.HUMAN); // Assign player 1 to X
-            Logic.CreateNewPlayer(PlayerType.ROBOT); // Assign bot to O
+            Logic.CreateNewPlayer(PlayerType.ROBOT); // Assign player 1 to X
+            Logic.CreateNewPlayer(PlayerType.HUMAN); // Assign bot to O
 
             Logic.StartGame();  // Starts the game
         }
@@ -89,24 +88,14 @@ namespace TicTacToe
             this.ClickHandler = handler;
         }
 
-        /*
-         * Iterates through every field to check all of them are empty
-         */ 
-        public bool IsEmpty()
-        {
-            for(int column = 0; column < BoardState.Length/3; column++) //Divide by 3 as .Length calculates the 3 x 3 of the array as 9
-            {
-                for (int row = 0; row < BoardState.Length/3; row++)
-                {
-                    if (BoardState[column,row] != FieldState.EMPTY) return false;
-                }
-            }
-            return true;
-        }
-
-        public static int getBoardSize()
+        public int GetBoardSize()
         {
             return BoardSize;
+        }
+
+        public int MaxBoardIndex()
+        {
+            return BoardSize - 1;
         }
 
         /*
