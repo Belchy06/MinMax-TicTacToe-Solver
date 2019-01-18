@@ -9,12 +9,13 @@ namespace TicTacToe
         private Player Player1;
         private Player Player2;
 
-        private readonly int NumWinPieces = 3; // Number of pieces in a row to win
+        private int NumWinPieces; // Number of pieces in a row to win
         private PlayerTurn CurrentTurn; // Describes which player's turn it is
 
         public GameLogic(GameBoard board)
         {
             Board = board;
+            NumWinPieces = Board.GetBoardSize();
         }
 
         public GameBoard GetGameBoard()

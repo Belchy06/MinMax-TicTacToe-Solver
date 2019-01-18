@@ -8,7 +8,7 @@ namespace TicTacToe
     public partial class GameBoard : Form
     {
         private int WindowSize = 500;    // Size of the window
-        private static readonly int BoardSize = 3; // Consolidated Rows and Columns into one variable
+        private static readonly int BoardSize = 4; // Consolidated Rows and Columns into one variable
 
         private float LineThickness = 10;   // Line thickness in pixels
         private int BordMargin = 30; // Top, right, bottom and left margin of the grid
@@ -48,8 +48,8 @@ namespace TicTacToe
             }
 
             Logic = new GameLogic(this);  // Initialize game logic
-            Logic.CreateNewPlayer(PlayerType.ROBOT); // Assign player 1 to X
-            Logic.CreateNewPlayer(PlayerType.HUMAN); // Assign bot to O
+            Logic.CreateNewPlayer(PlayerType.HUMAN); // Assign player 1 to X
+            Logic.CreateNewPlayer(PlayerType.ROBOT); // Assign bot to O
 
             Logic.StartGame();  // Starts the game
         }
@@ -103,9 +103,9 @@ namespace TicTacToe
          */
         public bool IsFull()
         {
-            for (int column = 0; column < BoardState.Length/3; column++) //Divide by 3 as .Length calculates the 3 x 3 of the array as 9
+            for (int column = 0; column < BoardState.Length / BoardSize; column++) //Divide by 3 as .Length calculates the 3 x 3 of the array as 9
             {
-                for (int row = 0; row < BoardState.Length/3; row++)
+                for (int row = 0; row < BoardState.Length / BoardSize; row++)
                 {
                     if (BoardState[column, row] == FieldState.EMPTY) return false;
                 }

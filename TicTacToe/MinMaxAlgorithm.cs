@@ -38,11 +38,11 @@ namespace TicTacToe
 
         public void PerformMove()
         {
-            AIMove bestMove = CalculateBestMove(BotPlayer);
+            AIMove bestMove = CalculateBestMove(BotPlayer, -100000, 100000, 5);
             Logic.MakeMove((int)bestMove.X, (int)bestMove.Y, BotPlayer);
         }
 
-        public AIMove CalculateBestMove(Player player)
+        public AIMove CalculateBestMove(Player player, long alpha, long beta, int depth)
         {
             WinState W = Logic.GetWinState();
 
@@ -58,9 +58,10 @@ namespace TicTacToe
             else if (W == WinState.DRAW)
             {
                 return new AIMove(null, null, 0); // Draw
+            } else if (depth == 0)
+            {
+                return new AIMove(null, null, 0); // Return an empty value as board has no winners or draw
             }
-
-            FieldState Field = player.GetRole();
 
             List<AIMove> Moves = new List<AIMove>(); //Store a list of the recursive moves
 
@@ -75,10 +76,20 @@ namespace TicTacToe
                         AIMove move; // Initialize struct
                         move.X = x;     // Store x value of current empty cell
                         move.Y = y;     // Store y value of current empty cell
-                        Logic.GetGameBoard().SetField(Field, x, y);
+                        Logic.GetGameBoard().SetField(player.GetRole(), x, y);
 
                         // Recursivly call method with the opponent of the current player 
-                        move.Score = CalculateBestMove(player == Logic.GetPlayer1() ? Logic.GetPlayer2() : Logic.GetPlayer1()).Score;
+                        move.Score = CalculateBestMove(player == Logic.GetPlayer1() ? Logic.GetPlayer2() : Logic.GetPlayer1(), alpha, beta, depth-1).Score;
+                        if(Logic.GetPlayer1().GetPlayerType() == PlayerType.ROBOT)
+                        {
+                            alpha = Math.Max(alpha, (long)move.Score);
+                            if (beta <= alpha) break;
+                        }
+                        else
+                        {
+                            beta = Math.Min(beta, (long)move.Score);
+                            if (beta <= alpha) break;
+                        }
 
                         Moves.Add(move);
                         Logic.GetGameBoard().SetField(FieldState.EMPTY, x, y); // Set the board cell back to empty after testing move
