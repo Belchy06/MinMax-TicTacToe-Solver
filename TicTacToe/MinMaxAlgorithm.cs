@@ -38,7 +38,7 @@ namespace TicTacToe
 
         public void PerformMove()
         {
-            AIMove bestMove = CalculateBestMove(BotPlayer, -100000, 100000, 5);
+            AIMove bestMove = CalculateBestMove(BotPlayer, -100000, 100000, 3);
             Logic.MakeMove((int)bestMove.X, (int)bestMove.Y, BotPlayer);
         }
 

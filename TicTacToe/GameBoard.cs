@@ -8,7 +8,7 @@ namespace TicTacToe
     public partial class GameBoard : Form
     {
         private int WindowSize = 500;    // Size of the window
-        private static readonly int BoardSize = 4; // Consolidated Rows and Columns into one variable
+        private static readonly int BoardSize = 3; // Consolidated Rows and Columns into one variable
 
         private float LineThickness = 10;   // Line thickness in pixels
         private int BordMargin = 30; // Top, right, bottom and left margin of the grid
