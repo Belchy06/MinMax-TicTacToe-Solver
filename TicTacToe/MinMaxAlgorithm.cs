@@ -12,22 +12,19 @@ namespace TicTacToe
     {
         private GameLogic Logic;
         private Player BotPlayer;
-        
+        //private List<AIMove> AIMoves = new List<AIMove>();
 
-        // Should move this to a class but it's okay as a struct for now
-        // This structure is used to store the variables of a move. Once the optimal move is found, the X and Y variables will be used in Logic.GetGameBoard().SetField
-        // Use of nullable as struct constructors must contain all variables, so for when we don't want to give X and value, we give it Null
         public struct AIMove 
         {
-            public AIMove(Nullable<int> x, Nullable<int> y, int score)
+            public AIMove(int? X, int? Y, int? Score)
             {
-                X = x;
-                Y = y;
-                Score = score;
+                x = X;
+                y = Y;
+                score = Score;
             }
-            public Nullable<int> X;
-            public Nullable<int> Y;
-            public Nullable<int> Score;
+            public int? x;
+            public int? y;
+            public int? score;
         }
 
         public MinMaxAlgorithm(GameLogic logic, Player player)
@@ -38,95 +35,89 @@ namespace TicTacToe
 
         public void PerformMove()
         {
-            AIMove bestMove = CalculateBestMove(BotPlayer, -100000, 100000, 3);
-            Logic.MakeMove((int)bestMove.X, (int)bestMove.Y, BotPlayer);
+            AIMove bestMove = CalculateBestMove(BotPlayer, -100000, 100000);
+            Logic.MakeMove((int)bestMove.x, (int)bestMove.y, BotPlayer);
         }
 
-        public AIMove CalculateBestMove(Player player, long alpha, long beta, int depth)
+        public AIMove CalculateBestMove(Player player, long alpha, long beta)
         {
             WinState W = Logic.GetWinState();
 
-            // Base case
-            if (W == WinState.XWIN)
+            switch(W)
             {
-                return new AIMove(null, null, BotPlayer.GetRole() == FieldState.X ? 10 : -10); // Win for X
-            }
-            else if (W == WinState.OWIN)
-            {
-                return new AIMove(null, null, BotPlayer.GetRole() == FieldState.O ? 10 : -10); // Win for O
-            }
-            else if (W == WinState.DRAW)
-            {
-                return new AIMove(null, null, 0); // Draw
-            } else if (depth == 0)
-            {
-                return new AIMove(null, null, 0); // Return an empty value as board has no winners or draw
+                case WinState.XWIN:
+                    return new AIMove(null, null, BotPlayer.GetRole() == FieldState.X ? 10 : -10); // Win for X
+
+                case WinState.OWIN:
+                    return new AIMove(null, null, BotPlayer.GetRole() == FieldState.O ? 10 : -10); // Win for O
+
+                case WinState.DRAW:
+                    return new AIMove(null, null, 0); // Draw
+
+                default:
+                    break;
             }
 
-            List<AIMove> Moves = new List<AIMove>(); //Store a list of the recursive moves
+            List<AIMove> AIMoves = new List<AIMove>();
 
-            // Do recursive function calls and construct list of moves
             for (int y = 0; y < Logic.GetGameBoard().GetBoardSize(); y++)
             {
                 for (int x = 0; x < Logic.GetGameBoard().GetBoardSize(); x++) // Iterates through the board to find empty cells. 
-                                                                   // This is where I would have used the list of empty cells
+                                                                              // This is where I would have used the list of empty cells
                 {
-                    if (Logic.GetGameBoard().BoardState[x,y] == FieldState.EMPTY)
+                    if (Logic.GetGameBoard().BoardState[x, y] == FieldState.EMPTY)
                     {
                         AIMove move; // Initialize struct
-                        move.X = x;     // Store x value of current empty cell
-                        move.Y = y;     // Store y value of current empty cell
+                        move.x = x;     // Store x value of current empty cell
+                        move.y = y;     // Store y value of current empty cell
                         Logic.GetGameBoard().SetField(player.GetRole(), x, y);
 
                         // Recursivly call method with the opponent of the current player 
-                        move.Score = CalculateBestMove(player == Logic.GetPlayer1() ? Logic.GetPlayer2() : Logic.GetPlayer1(), alpha, beta, depth-1).Score;
-                        if(Logic.GetPlayer1().GetPlayerType() == PlayerType.ROBOT)
+                        move.score = CalculateBestMove(player == Logic.GetPlayer1() ? Logic.GetPlayer2() : Logic.GetPlayer1(), alpha, beta).score;
+                        if (Logic.GetPlayer1().GetPlayerType() == PlayerType.ROBOT)
                         {
-                            alpha = Math.Max(alpha, (long)move.Score);
+                            alpha = Math.Max(alpha, (long)move.score);
                             if (beta <= alpha) break;
                         }
                         else
                         {
-                            beta = Math.Min(beta, (long)move.Score);
+                            beta = Math.Min(beta, (long)move.score);
                             if (beta <= alpha) break;
                         }
 
-                        Moves.Add(move);
+                        AIMoves.Add(move);
                         Logic.GetGameBoard().SetField(FieldState.EMPTY, x, y); // Set the board cell back to empty after testing move
                     }
                 }
             }
 
-
-            // Pick the best move for the current player
             int BestMove = 0;
-            if(player.GetPlayerType() == PlayerType.ROBOT)
+            if (player.GetPlayerType() == PlayerType.ROBOT)
             {
                 int BestScore = -10000;
-                for(int i = 0; i < Moves.Count(); i++)
+                for (int i = 0; i < AIMoves.Count(); i++)
                 {
-                    if(Moves[i].Score > BestScore)
+                    if (AIMoves[i].score > BestScore)
                     {
                         BestMove = i;
-                        BestScore = (int)Moves[i].Score;
+                        BestScore = (int)AIMoves[i].score;
                     }
                 }
             }
             else
             {
                 int BestScore = 10000;
-                for (int i = 0; i < Moves.Count(); i++)
+                for (int i = 0; i < AIMoves.Count(); i++)
                 {
-                    if (Moves[i].Score < BestScore)
+                    if (AIMoves[i].score < BestScore)
                     {
                         BestMove = i;
-                        BestScore = (int)Moves[i].Score;
+                        BestScore = (int)AIMoves[i].score;
                     }
                 }
             }
 
-            // Return best move
-            return Moves[BestMove];
+            return AIMoves[BestMove];
         }
     }
 }
